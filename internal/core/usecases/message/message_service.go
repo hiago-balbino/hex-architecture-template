@@ -31,7 +31,10 @@ func (m messageService) Set(ctx context.Context, content string) (domain.Message
 func (m messageService) Get(ctx context.Context, id string) (domain.Message, error) {
 	message, err := m.repository.Get(ctx, id)
 	if err != nil {
-		return domain.Message{}, errors.Join(apperrors.NotFound, err)
+		if errors.Is(err, apperrors.NotFound) {
+			return domain.Message{}, err
+		}
+		return domain.Message{}, errors.Join(apperrors.InternalServerError, err)
 	}
 	return message, nil
 }
@@ -42,4 +45,15 @@ func (m messageService) GetAll(ctx context.Context) ([]domain.Message, error) {
 		return nil, errors.Join(apperrors.InternalServerError, err)
 	}
 	return messages, nil
+}
+
+func (m messageService) Delete(ctx context.Context, id string) error {
+	err := m.repository.Delete(ctx, id)
+	if err != nil {
+		if errors.Is(err, apperrors.NotFound) {
+			return err
+		}
+		return errors.Join(apperrors.InternalServerError, err)
+	}
+	return nil
 }

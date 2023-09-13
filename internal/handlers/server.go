@@ -25,5 +25,6 @@ func (s Server) Start() {
 	router.POST("/message", s.messagehdl.createMessage)
 	router.GET("/message/:id", s.messagehdl.getMessage)
 	router.GET("/messages", s.messagehdl.getMessages)
+	router.DELETE("/message/:id", s.messagehdl.deleteMessage)
 	router.Run(":8080")
 }

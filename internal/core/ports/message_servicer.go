@@ -10,4 +10,5 @@ type MessageServicer interface {
 	Set(ctx context.Context, content string) (domain.Message, error)
 	Get(ctx context.Context, id string) (domain.Message, error)
 	GetAll(ctx context.Context) ([]domain.Message, error)
+	Delete(ctx context.Context, id string) error
 }

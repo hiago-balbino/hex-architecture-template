@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiago-balbino/hex-architecture-template/internal/core/dto"
@@ -29,7 +30,7 @@ func (h messageHandler) createMessage(c *gin.Context) {
 
 	message, err := h.service.Set(c.Request.Context(), messageReqDto.Content)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -60,4 +61,16 @@ func (h messageHandler) getMessages(c *gin.Context) {
 	}
 
 	c.JSON(200, dto.BuildResponseGetMessages(messages))
+}
+
+func (h messageHandler) deleteMessage(c *gin.Context) {
+	messageID := c.Param("id")
+
+	err := h.service.Delete(c.Request.Context(), messageID)
+	if err != nil && !errors.Is(err, apperrors.NotFound) {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }
