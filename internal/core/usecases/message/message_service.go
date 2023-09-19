@@ -7,20 +7,23 @@ import (
 	"github.com/hiago-balbino/hex-architecture-template/internal/core/domain"
 	"github.com/hiago-balbino/hex-architecture-template/internal/core/ports"
 	"github.com/hiago-balbino/hex-architecture-template/pkg/apperrors"
+	"github.com/hiago-balbino/hex-architecture-template/pkg/identifier"
 )
 
 type messageService struct {
-	repository ports.MessageRepository
+	uuidGenerator identifier.UUIDGenerator
+	repository    ports.MessageRepository
 }
 
-func NewMessageService(repository ports.MessageRepository) messageService {
+func NewMessageService(uuidGenerator identifier.UUIDGenerator, repository ports.MessageRepository) messageService {
 	return messageService{
-		repository: repository,
+		uuidGenerator: uuidGenerator,
+		repository:    repository,
 	}
 }
 
 func (m messageService) Set(ctx context.Context, content string) (domain.Message, error) {
-	message := domain.NewMessage(content)
+	message := domain.NewMessage(m.uuidGenerator.New(), content)
 	err := m.repository.Set(ctx, message)
 	if err != nil {
 		return domain.Message{}, errors.Join(apperrors.InvalidInput, err)

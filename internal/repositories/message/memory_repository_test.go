@@ -11,7 +11,7 @@ import (
 )
 
 func TestSet_ShouldSetMessageWithSuccess(t *testing.T) {
-	message := domain.NewMessage("message content")
+	message := domain.NewMessage("id", "message content")
 
 	repo := NewMessageRepository()
 	err := repo.Set(context.Background(), message)
@@ -42,7 +42,7 @@ func TestGet_ShouldReturnErrorWhenInvalidMessageContent(t *testing.T) {
 
 func TestGet_ShouldGetMessageWithSuccess(t *testing.T) {
 	ctx := context.Background()
-	expectedMessage := domain.NewMessage("message content")
+	expectedMessage := domain.NewMessage("id", "message content")
 
 	repo := NewMessageRepository()
 	err := repo.Set(ctx, expectedMessage)
@@ -55,7 +55,7 @@ func TestGet_ShouldGetMessageWithSuccess(t *testing.T) {
 
 func TestGetAll_ShouldReturnErrorWhenInvalidMessageContent(t *testing.T) {
 	ctx := context.Background()
-	firstMessage := domain.Message{ID: uuid.NewString(), Content: "message 1"}
+	firstMessage := domain.Message{ID: uuid.NewString(), Content: "message content 1"}
 	secondMessage := domain.Message{ID: uuid.NewString(), Content: "{"}
 
 	repo := messageRepository{data: map[string][]byte{
@@ -70,8 +70,8 @@ func TestGetAll_ShouldReturnErrorWhenInvalidMessageContent(t *testing.T) {
 
 func TestGetAll_ShouldReturnAllMessagesWithSuccess(t *testing.T) {
 	ctx := context.Background()
-	firstMessage := domain.NewMessage("message 1")
-	secondMessage := domain.NewMessage("message 2")
+	firstMessage := domain.NewMessage("id1", "message content 1")
+	secondMessage := domain.NewMessage("id2", "message content 2")
 	expectedMessages := []domain.Message{firstMessage, secondMessage}
 
 	repo := NewMessageRepository()
@@ -97,7 +97,7 @@ func TestDelete_ShouldReturnErrorWhenMessageNotFound(t *testing.T) {
 
 func TestDelete_ShouldDeleteMessageWithSuccess(t *testing.T) {
 	ctx := context.Background()
-	message := domain.NewMessage("message content")
+	message := domain.NewMessage("id", "message content")
 
 	repo := NewMessageRepository()
 	err := repo.Set(ctx, message)

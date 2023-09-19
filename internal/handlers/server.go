@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	service "github.com/hiago-balbino/hex-architecture-template/internal/core/usecases/message"
 	repo "github.com/hiago-balbino/hex-architecture-template/internal/repositories/message"
+	"github.com/hiago-balbino/hex-architecture-template/pkg/identifier"
 )
 
 type Server struct {
@@ -11,8 +12,9 @@ type Server struct {
 }
 
 func NewServer() Server {
+	uuidGenerator := identifier.NewUUIDGenerator()
 	messageRepository := repo.NewMessageRepository()
-	messageService := service.NewMessageService(messageRepository)
+	messageService := service.NewMessageService(uuidGenerator, messageRepository)
 	messageHandler := NewMessageHandler(messageService)
 
 	return Server{
