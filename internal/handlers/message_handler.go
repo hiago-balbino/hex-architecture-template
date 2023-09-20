@@ -30,7 +30,7 @@ func (h messageHandler) createMessage(c *gin.Context) {
 
 	message, err := h.service.Set(c.Request.Context(), messageReqDto.Content)
 	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 

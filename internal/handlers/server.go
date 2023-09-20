@@ -23,10 +23,15 @@ func NewServer() Server {
 }
 
 func (s Server) Start() {
+	router := s.setupRoutes()
+	router.Run(":8080")
+}
+
+func (s Server) setupRoutes() *gin.Engine {
 	router := gin.Default()
 	router.POST("/message", s.messagehdl.createMessage)
 	router.GET("/message/:id", s.messagehdl.getMessage)
 	router.GET("/messages", s.messagehdl.getMessages)
 	router.DELETE("/message/:id", s.messagehdl.deleteMessage)
-	router.Run(":8080")
+	return router
 }
