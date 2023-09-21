@@ -22,18 +22,18 @@ It makes a project scalable, easy to maintain and productive when implemented.
 
 * CORE
     * In this architectural model, everything is built around the core. Think of the core as a hexagon structure, which is where the business rule is. Everything outside the hexagon is seen as the external world
-    * When we are in the core planning phase, we must refrain from technical decisions (which database, relationship between tables, framework, REST/gRPC, etc.)
+    * When we are in the core planning phase, we must refrain from technical decisions (which database, relationship between tables, framework, REST/gRPC, etc)
     * This layer must be 100% agnostic to any technical decision and must be 100% focused on solving the problem so that the application is born
 * ACTORS
-    * They are “things” from the world outside the nucleus, which can be people, databases or other applications. The actors are divided into two groups:
-        * DRIVER: Trigger some interaction with the core of the application (e.g. People)
-        * DRIVEN: They expect communication from the core (e.g. database, queue, external APIs
+    * They are “things” from the world outside the core, which can be people, databases or other applications. The actors are divided into two groups:
+        * DRIVER: Trigger some interaction with the core of the application (e.g. people)
+        * DRIVEN: They expect communication from the core (e.g. database, queue, external APIs)
 * PORTS
-    * They are interfaces defined in the nucleus to communicate with the external world, and just like the atheros there are two types of ports
+    * They are interfaces defined in the core to communicate with the external world, and just like the actors, there are two types of ports
         * DRIVER: These are actions exposed to the eyes of the driver through functions and methods
-        * DRIVEN: These are well-defined communication interfaces that must be implemented by the activated type actors
+        * DRIVEN: These are well-defined communication interfaces that must be implemented by driven actors
 * ADAPTERS
-    * These are components responsible for integrating the nucleus with the external world. The role of these components is to translate what the driver actor wants into what the core understands, as well as what the core wants into what the drive actor understands.
+    * These are components responsible for integrating the core with the external world. The role of these components is to translate what the driver actor wants into what the core understands, as well as what the core wants into what the driven actor understands
         * DRIVER: Translate requests into core service calls
         * DRIVEN: Translate the core request into what its actor understands, for example, SQL
 * DEPENDENCY INJECTION
