@@ -7,26 +7,26 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MessageServicerMock struct {
+type MessageUseCaseMock struct {
 	mock.Mock
 }
 
-func (m *MessageServicerMock) Set(ctx context.Context, content string) (domain.Message, error) {
+func (m *MessageUseCaseMock) Save(ctx context.Context, content string) (domain.Message, error) {
 	args := m.Called(ctx, content)
 	return args.Get(0).(domain.Message), args.Error(1)
 }
 
-func (m *MessageServicerMock) Get(ctx context.Context, id string) (domain.Message, error) {
+func (m *MessageUseCaseMock) GetByID(ctx context.Context, id string) (domain.Message, error) {
 	args := m.Called(ctx, id)
 	return args.Get(0).(domain.Message), args.Error(1)
 }
 
-func (m *MessageServicerMock) GetAll(ctx context.Context) ([]domain.Message, error) {
+func (m *MessageUseCaseMock) GetAll(ctx context.Context) ([]domain.Message, error) {
 	args := m.Called(ctx)
 	return args.Get(0).([]domain.Message), args.Error(1)
 }
 
-func (m *MessageServicerMock) Delete(ctx context.Context, id string) error {
+func (m *MessageUseCaseMock) DeleteByID(ctx context.Context, id string) error {
 	args := m.Called(ctx, id)
 	return args.Error(0)
 }

@@ -1,4 +1,4 @@
-package messagerepo
+package memory
 
 import (
 	"context"
@@ -11,17 +11,17 @@ import (
 
 var errNotFoundMessageID = errors.New("message id not found")
 
-type messageRepository struct {
+type messageStorage struct {
 	data map[string][]byte
 }
 
-func NewMessageRepository() messageRepository {
-	return messageRepository{
+func NewMessageStorage() messageStorage {
+	return messageStorage{
 		data: make(map[string][]byte),
 	}
 }
 
-func (m messageRepository) Set(ctx context.Context, message domain.Message) error {
+func (m messageStorage) Save(ctx context.Context, message domain.Message) error {
 	messageJSON, err := json.Marshal(message)
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func (m messageRepository) Set(ctx context.Context, message domain.Message) erro
 	return nil
 }
 
-func (m messageRepository) Get(ctx context.Context, id string) (domain.Message, error) {
+func (m messageStorage) GetByID(ctx context.Context, id string) (domain.Message, error) {
 	messageJSON, ok := m.data[id]
 	if !ok {
 		return domain.Message{}, errors.Join(apperrors.NotFound, errNotFoundMessageID)
@@ -46,7 +46,7 @@ func (m messageRepository) Get(ctx context.Context, id string) (domain.Message, 
 	return message, nil
 }
 
-func (m messageRepository) GetAll(ctx context.Context) ([]domain.Message, error) {
+func (m messageStorage) GetAll(ctx context.Context) ([]domain.Message, error) {
 	var messages []domain.Message
 
 	for _, messageJSON := range m.data {
@@ -61,7 +61,7 @@ func (m messageRepository) GetAll(ctx context.Context) ([]domain.Message, error)
 	return messages, nil
 }
 
-func (m messageRepository) Delete(ctx context.Context, id string) error {
+func (m messageStorage) DeleteByID(ctx context.Context, id string) error {
 	if _, ok := m.data[id]; !ok {
 		return errors.Join(apperrors.NotFound, errNotFoundMessageID)
 	}

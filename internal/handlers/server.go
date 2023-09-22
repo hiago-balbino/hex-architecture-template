@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	service "github.com/hiago-balbino/hex-architecture-template/internal/core/usecases/message"
-	repo "github.com/hiago-balbino/hex-architecture-template/internal/repositories/message"
+	usecases "github.com/hiago-balbino/hex-architecture-template/internal/core/usecases/message"
+	"github.com/hiago-balbino/hex-architecture-template/internal/repositories/memory"
 	"github.com/hiago-balbino/hex-architecture-template/pkg/identifier"
 )
 
@@ -13,8 +13,8 @@ type Server struct {
 
 func NewServer() Server {
 	uuidGenerator := identifier.NewUUIDGenerator()
-	messageRepository := repo.NewMessageRepository()
-	messageService := service.NewMessageService(uuidGenerator, messageRepository)
+	messageRepository := memory.NewMessageStorage()
+	messageService := usecases.NewMessageService(uuidGenerator, messageRepository)
 	messageHandler := NewMessageHandler(messageService)
 
 	return Server{

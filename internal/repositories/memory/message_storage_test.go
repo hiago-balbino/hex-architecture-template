@@ -1,4 +1,4 @@
-package messagerepo
+package memory
 
 import (
 	"context"
@@ -10,45 +10,45 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSet_ShouldSetMessageWithSuccess(t *testing.T) {
+func TestSave_ShouldSaveMessageWithSuccess(t *testing.T) {
 	message := domain.NewMessage("id", "message content")
 
-	repo := NewMessageRepository()
-	err := repo.Set(context.Background(), message)
+	repo := NewMessageStorage()
+	err := repo.Save(context.Background(), message)
 
 	assert.NoError(t, err)
 }
 
-func TestGet_ShouldReturnErrorWhenMessageNotFound(t *testing.T) {
+func TestGetByID_ShouldReturnErrorWhenMessageNotFound(t *testing.T) {
 	messageID := uuid.NewString()
 
-	repo := NewMessageRepository()
-	actualMessage, err := repo.Get(context.Background(), messageID)
+	repo := NewMessageStorage()
+	actualMessage, err := repo.GetByID(context.Background(), messageID)
 
 	assert.ErrorIs(t, err, apperrors.NotFound)
 	assert.Empty(t, actualMessage)
 }
 
-func TestGet_ShouldReturnErrorWhenInvalidMessageContent(t *testing.T) {
+func TestGetByID_ShouldReturnErrorWhenInvalidMessageContent(t *testing.T) {
 	messageID := uuid.NewString()
 	invalidMessageContent := []byte("{")
 
-	repo := messageRepository{data: map[string][]byte{messageID: invalidMessageContent}}
-	message, err := repo.Get(context.Background(), messageID)
+	repo := messageStorage{data: map[string][]byte{messageID: invalidMessageContent}}
+	message, err := repo.GetByID(context.Background(), messageID)
 
 	assert.Error(t, err)
 	assert.Empty(t, message)
 }
 
-func TestGet_ShouldGetMessageWithSuccess(t *testing.T) {
+func TestGetByID_ShouldGetMessageWithSuccess(t *testing.T) {
 	ctx := context.Background()
 	expectedMessage := domain.NewMessage("id", "message content")
 
-	repo := NewMessageRepository()
-	err := repo.Set(ctx, expectedMessage)
+	repo := NewMessageStorage()
+	err := repo.Save(ctx, expectedMessage)
 	assert.NoError(t, err)
 
-	actualMessage, err := repo.Get(ctx, expectedMessage.ID)
+	actualMessage, err := repo.GetByID(ctx, expectedMessage.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedMessage, actualMessage)
 }
@@ -58,7 +58,7 @@ func TestGetAll_ShouldReturnErrorWhenInvalidMessageContent(t *testing.T) {
 	firstMessage := domain.Message{ID: uuid.NewString(), Content: "message content 1"}
 	secondMessage := domain.Message{ID: uuid.NewString(), Content: "{"}
 
-	repo := messageRepository{data: map[string][]byte{
+	repo := messageStorage{data: map[string][]byte{
 		firstMessage.ID:  []byte(firstMessage.Content),
 		secondMessage.ID: []byte(secondMessage.Content),
 	}}
@@ -74,10 +74,10 @@ func TestGetAll_ShouldReturnAllMessagesWithSuccess(t *testing.T) {
 	secondMessage := domain.NewMessage("id2", "message content 2")
 	expectedMessages := []domain.Message{firstMessage, secondMessage}
 
-	repo := NewMessageRepository()
-	err := repo.Set(ctx, firstMessage)
+	repo := NewMessageStorage()
+	err := repo.Save(ctx, firstMessage)
 	assert.NoError(t, err)
-	err = repo.Set(ctx, secondMessage)
+	err = repo.Save(ctx, secondMessage)
 	assert.NoError(t, err)
 
 	actualMessages, err := repo.GetAll(ctx)
@@ -85,24 +85,24 @@ func TestGetAll_ShouldReturnAllMessagesWithSuccess(t *testing.T) {
 	assert.Equal(t, expectedMessages, actualMessages)
 }
 
-func TestDelete_ShouldReturnErrorWhenMessageNotFound(t *testing.T) {
+func TestDeleteByID_ShouldReturnErrorWhenMessageNotFound(t *testing.T) {
 	ctx := context.Background()
 	messageID := uuid.NewString()
 
-	repo := NewMessageRepository()
-	err := repo.Delete(ctx, messageID)
+	repo := NewMessageStorage()
+	err := repo.DeleteByID(ctx, messageID)
 
 	assert.ErrorIs(t, err, apperrors.NotFound)
 }
 
-func TestDelete_ShouldDeleteMessageWithSuccess(t *testing.T) {
+func TestDeleteByID_ShouldDeleteMessageWithSuccess(t *testing.T) {
 	ctx := context.Background()
 	message := domain.NewMessage("id", "message content")
 
-	repo := NewMessageRepository()
-	err := repo.Set(ctx, message)
+	repo := NewMessageStorage()
+	err := repo.Save(ctx, message)
 	assert.NoError(t, err)
 
-	err = repo.Delete(ctx, message.ID)
+	err = repo.DeleteByID(ctx, message.ID)
 	assert.NoError(t, err)
 }

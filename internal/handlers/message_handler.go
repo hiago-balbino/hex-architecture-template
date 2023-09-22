@@ -11,10 +11,10 @@ import (
 )
 
 type messageHandler struct {
-	service ports.MessageServicer
+	service ports.MessageUseCase
 }
 
-func NewMessageHandler(service ports.MessageServicer) messageHandler {
+func NewMessageHandler(service ports.MessageUseCase) messageHandler {
 	return messageHandler{
 		service: service,
 	}
@@ -28,7 +28,7 @@ func (h messageHandler) createMessage(c *gin.Context) {
 		return
 	}
 
-	message, err := h.service.Set(c.Request.Context(), messageReqDto.Content)
+	message, err := h.service.Save(c.Request.Context(), messageReqDto.Content)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
@@ -40,7 +40,7 @@ func (h messageHandler) createMessage(c *gin.Context) {
 func (h messageHandler) getMessage(c *gin.Context) {
 	messageID := c.Param("id")
 
-	message, err := h.service.Get(c.Request.Context(), messageID)
+	message, err := h.service.GetByID(c.Request.Context(), messageID)
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
 			c.JSON(404, gin.H{"error": err.Error()})
@@ -66,7 +66,7 @@ func (h messageHandler) getMessages(c *gin.Context) {
 func (h messageHandler) deleteMessage(c *gin.Context) {
 	messageID := c.Param("id")
 
-	err := h.service.Delete(c.Request.Context(), messageID)
+	err := h.service.DeleteByID(c.Request.Context(), messageID)
 	if err != nil && !errors.Is(err, apperrors.NotFound) {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return

@@ -44,7 +44,7 @@ It makes a project scalable, easy to maintain and productive when implemented.
 ### Project Structure
 ```
 ├── cmd
-│   └── api
+│   └── hexapi
 │       └── main.go
 ├── internal
 │   ├── core
@@ -55,7 +55,7 @@ It makes a project scalable, easy to maintain and productive when implemented.
 │   │   │   └── get_message.go
 │   │   ├── ports
 │   │   │   ├── message_repository.go
-│   │   │   └── message_servicer.go
+│   │   │   └── message_usecase.go
 │   │   └── usecases
 │   │       └── message
 │   │           ├── message_service.go
@@ -65,9 +65,9 @@ It makes a project scalable, easy to maintain and productive when implemented.
 │   │   ├── message_handler_test.go
 │   │   └── server.go
 │   └── repositories
-│       └── message
-│           ├── memory_repository.go
-│           └── memory_repository_test.go
+│       └── memory
+│           ├── message_storage.go
+│           └── message_storage_test.go
 ├── pkg
 │   ├── apperrors
 │   │   └── apperrors.go
@@ -76,6 +76,6 @@ It makes a project scalable, easy to maintain and productive when implemented.
 └── test
     └── mocks
         ├── message_repository_mock.go
-        ├── message_servicer_mock.go
+        ├── message_usecase_mock.go
         └── uuid_generator_mock.go
 ```

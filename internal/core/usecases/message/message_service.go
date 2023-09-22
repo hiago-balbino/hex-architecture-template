@@ -1,4 +1,4 @@
-package message
+package usecases
 
 import (
 	"context"
@@ -22,17 +22,17 @@ func NewMessageService(uuidGenerator identifier.UUIDGenerator, repository ports.
 	}
 }
 
-func (m messageService) Set(ctx context.Context, content string) (domain.Message, error) {
+func (m messageService) Save(ctx context.Context, content string) (domain.Message, error) {
 	message := domain.NewMessage(m.uuidGenerator.New(), content)
-	err := m.repository.Set(ctx, message)
+	err := m.repository.Save(ctx, message)
 	if err != nil {
 		return domain.Message{}, errors.Join(apperrors.InvalidInput, err)
 	}
 	return message, nil
 }
 
-func (m messageService) Get(ctx context.Context, id string) (domain.Message, error) {
-	message, err := m.repository.Get(ctx, id)
+func (m messageService) GetByID(ctx context.Context, id string) (domain.Message, error) {
+	message, err := m.repository.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
 			return domain.Message{}, err
@@ -50,8 +50,8 @@ func (m messageService) GetAll(ctx context.Context) ([]domain.Message, error) {
 	return messages, nil
 }
 
-func (m messageService) Delete(ctx context.Context, id string) error {
-	err := m.repository.Delete(ctx, id)
+func (m messageService) DeleteByID(ctx context.Context, id string) error {
+	err := m.repository.DeleteByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
 			return err

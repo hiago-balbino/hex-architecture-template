@@ -34,8 +34,8 @@ func TestCreateMessage_ShouldReturnErrorWhenFailsToSetMessage(t *testing.T) {
 	unexpectedError := errors.New("unexpected error")
 	body := dto.CreateMessageRequest{Content: "message content"}
 
-	serviceMock := new(mocks.MessageServicerMock)
-	serviceMock.On("Set", mock.Anything, body.Content).Return(domain.Message{}, unexpectedError)
+	serviceMock := new(mocks.MessageUseCaseMock)
+	serviceMock.On("Save", mock.Anything, body.Content).Return(domain.Message{}, unexpectedError)
 
 	handler := setupHandler(serviceMock)
 	server := httptest.NewServer(handler)
@@ -52,8 +52,8 @@ func TestCreateMessage_ShouldSetMessageWithSuccess(t *testing.T) {
 	body := dto.CreateMessageRequest{Content: "message content"}
 	message := domain.NewMessage(uuid.NewString(), body.Content)
 
-	serviceMock := new(mocks.MessageServicerMock)
-	serviceMock.On("Set", mock.Anything, message.Content).Return(message, nil)
+	serviceMock := new(mocks.MessageUseCaseMock)
+	serviceMock.On("Save", mock.Anything, message.Content).Return(message, nil)
 
 	handler := setupHandler(serviceMock)
 	server := httptest.NewServer(handler)
@@ -72,8 +72,8 @@ func TestCreateMessage_ShouldSetMessageWithSuccess(t *testing.T) {
 func TestGetMessage_ShouldReturnErrorWhenMessageNotFound(t *testing.T) {
 	messageID := uuid.NewString()
 
-	serviceMock := new(mocks.MessageServicerMock)
-	serviceMock.On("Get", mock.Anything, messageID).Return(domain.Message{}, apperrors.NotFound)
+	serviceMock := new(mocks.MessageUseCaseMock)
+	serviceMock.On("GetByID", mock.Anything, messageID).Return(domain.Message{}, apperrors.NotFound)
 
 	handler := setupHandler(serviceMock)
 	server := httptest.NewServer(handler)
@@ -90,8 +90,8 @@ func TestGetMessage_ShouldReturnErrorWhenFailsToGetMessage(t *testing.T) {
 	messageID := uuid.NewString()
 	unexpectedError := errors.New("unexpected error")
 
-	serviceMock := new(mocks.MessageServicerMock)
-	serviceMock.On("Get", mock.Anything, messageID).Return(domain.Message{}, unexpectedError)
+	serviceMock := new(mocks.MessageUseCaseMock)
+	serviceMock.On("GetByID", mock.Anything, messageID).Return(domain.Message{}, unexpectedError)
 
 	handler := setupHandler(serviceMock)
 	server := httptest.NewServer(handler)
@@ -107,8 +107,8 @@ func TestGetMessage_ShouldReturnErrorWhenFailsToGetMessage(t *testing.T) {
 func TestGetMessage_ShouldReturnMessageWithSuccedd(t *testing.T) {
 	message := domain.NewMessage(uuid.NewString(), "message content")
 
-	serviceMock := new(mocks.MessageServicerMock)
-	serviceMock.On("Get", mock.Anything, message.ID).Return(message, nil)
+	serviceMock := new(mocks.MessageUseCaseMock)
+	serviceMock.On("GetByID", mock.Anything, message.ID).Return(message, nil)
 
 	handler := setupHandler(serviceMock)
 	server := httptest.NewServer(handler)
@@ -128,7 +128,7 @@ func TestGetMessage_ShouldReturnMessageWithSuccedd(t *testing.T) {
 func TestGetMessages_ShouldReturnErrorWhenFailsToGetMessages(t *testing.T) {
 	unexpectedError := errors.New("unexpected error")
 
-	serviceMock := new(mocks.MessageServicerMock)
+	serviceMock := new(mocks.MessageUseCaseMock)
 	serviceMock.On("GetAll", mock.Anything).Return([]domain.Message{}, unexpectedError)
 
 	handler := setupHandler(serviceMock)
@@ -147,7 +147,7 @@ func TestGetMessages_ShouldReturnMessagesWithSuccess(t *testing.T) {
 		domain.NewMessage(uuid.NewString(), "message content 2"),
 	}
 
-	serviceMock := new(mocks.MessageServicerMock)
+	serviceMock := new(mocks.MessageUseCaseMock)
 	serviceMock.On("GetAll", mock.Anything).Return(messages, nil)
 
 	handler := setupHandler(serviceMock)
@@ -169,8 +169,8 @@ func TestGetMessages_ShouldReturnMessagesWithSuccess(t *testing.T) {
 func TestDeleteMessage_ShouldReturnNoContentWhenMessageNotFound(t *testing.T) {
 	messageID := uuid.NewString()
 
-	serviceMock := new(mocks.MessageServicerMock)
-	serviceMock.On("Delete", mock.Anything, messageID).Return(apperrors.NotFound)
+	serviceMock := new(mocks.MessageUseCaseMock)
+	serviceMock.On("DeleteByID", mock.Anything, messageID).Return(apperrors.NotFound)
 
 	handler := setupHandler(serviceMock)
 	server := httptest.NewServer(handler)
@@ -187,8 +187,8 @@ func TestDeleteMessage_ShouldReturnErrorWheFailsToDeleteMessage(t *testing.T) {
 	messageID := uuid.NewString()
 	unexpectedError := errors.New("unexpected error")
 
-	serviceMock := new(mocks.MessageServicerMock)
-	serviceMock.On("Delete", mock.Anything, messageID).Return(unexpectedError)
+	serviceMock := new(mocks.MessageUseCaseMock)
+	serviceMock.On("DeleteByID", mock.Anything, messageID).Return(unexpectedError)
 
 	handler := setupHandler(serviceMock)
 	server := httptest.NewServer(handler)
@@ -204,8 +204,8 @@ func TestDeleteMessage_ShouldReturnErrorWheFailsToDeleteMessage(t *testing.T) {
 func TestDeleteMessage_ShouldReturnNoContentWhenDeleteMessageWithSuccess(t *testing.T) {
 	messageID := uuid.NewString()
 
-	serviceMock := new(mocks.MessageServicerMock)
-	serviceMock.On("Delete", mock.Anything, messageID).Return(nil)
+	serviceMock := new(mocks.MessageUseCaseMock)
+	serviceMock.On("DeleteByID", mock.Anything, messageID).Return(nil)
 
 	handler := setupHandler(serviceMock)
 	server := httptest.NewServer(handler)
@@ -218,7 +218,7 @@ func TestDeleteMessage_ShouldReturnNoContentWhenDeleteMessageWithSuccess(t *test
 		Body().IsEmpty()
 }
 
-func setupHandler(service ports.MessageServicer) *gin.Engine {
+func setupHandler(service ports.MessageUseCase) *gin.Engine {
 	handler := NewMessageHandler(service)
 	server := Server{messagehdl: handler}
 	router := server.setupRoutes()
