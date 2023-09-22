@@ -6,4 +6,4 @@ test:
 
 ## run: run the application
 run:
-	go run cmd/api/main.go
+	go run cmd/hexapi/main.go

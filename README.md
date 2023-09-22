@@ -1,5 +1,5 @@
 # Hexagonal Architecture Template
-This is a project template using Hexagonal Architecture in Go.
+This is an API project template using Hexagonal Architecture in Go.
 
 ### What is the concept?
 
